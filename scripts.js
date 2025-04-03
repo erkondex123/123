@@ -1,17 +1,21 @@
 async function sendMessage() {
-    const userInput = document.getElementById("user-input").value;
+    const userInputElement = document.getElementById("user-input");
+    const userInput = userInputElement.value.trim();
+    const chatBox = document.getElementById("chat-box");
+
     if (!userInput) return;
 
-    const chatBox = document.getElementById("chat-box");
+    // Отображаем сообщение пользователя
     chatBox.innerHTML += `<div><strong>Вы:</strong> ${userInput}</div>`;
-    document.getElementById("user-input").value = "";
+    userInputElement.value = "";
+    userInputElement.disabled = true;
 
     try {
         const response = await fetch("https://api.openai.com/v1/chat/completions", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer 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` // Используем API-ключ
+                "Authorization": `Bearer ${OPENAI_API_KEY}` // Используем ключ из config.js
             },
             body: JSON.stringify({
                 model: "gpt-3.5-turbo",
@@ -28,9 +32,24 @@ async function sendMessage() {
         const botMessage = data.choices[0].message.content;
 
         chatBox.innerHTML += `<div><strong>Бот:</strong> ${botMessage}</div>`;
-        chatBox.scrollTop = chatBox.scrollHeight;
     } catch (error) {
         console.error("Ошибка запроса:", error);
         chatBox.innerHTML += `<div style="color:red;"><strong>Ошибка:</strong> ${error.message}</div>`;
+    } finally {
+        userInputElement.disabled = false;
+        userInputElement.focus();
+        chatBox.scrollTop = chatBox.scrollHeight;
     }
 }
+
+// Поддержка отправки по Enter
+document.addEventListener("DOMContentLoaded", () => {
+    const inputField = document.getElementById("user-input");
+    inputField.focus();
+
+    inputField.addEventListener("keypress", function (e) {
+        if (e.key === "Enter") {
+            sendMessage();
+        }
+    });
+});
