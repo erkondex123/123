@@ -1,1 +1,1 @@
-const OPENAI_API_KEY = "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";  // Замените на свой ключ
+const OPENAI_API_KEY = "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";  // Замените на свой ключ
