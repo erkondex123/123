@@ -2,11 +2,8 @@ async function sendMessage() {
     const userInput = document.getElementById("user-input").value;
     if (!userInput) return;
 
-    // Добавляем сообщение пользователя в чат
     const chatBox = document.getElementById("chat-box");
     chatBox.innerHTML += `<div><strong>Вы:</strong> ${userInput}</div>`;
-
-    // Очищаем поле ввода
     document.getElementById("user-input").value = "";
 
     try {
@@ -22,13 +19,18 @@ async function sendMessage() {
             })
         });
 
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Ошибка API: ${response.status} - ${errorText}`);
+        }
+
         const data = await response.json();
         const botMessage = data.choices[0].message.content;
 
-        // Добавляем ответ бота в чат
         chatBox.innerHTML += `<div><strong>Бот:</strong> ${botMessage}</div>`;
         chatBox.scrollTop = chatBox.scrollHeight;
     } catch (error) {
-        chatBox.innerHTML += `<div style="color:red;"><strong>Ошибка:</strong> Не удалось получить ответ</div>`;
+        console.error("Ошибка запроса:", error);
+        chatBox.innerHTML += `<div style="color:red;"><strong>Ошибка:</strong> ${error.message}</div>`;
     }
 }
