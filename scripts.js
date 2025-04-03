@@ -15,7 +15,7 @@ async function sendMessage() {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${OPENAI_API_KEY}` // Используем ключ из config.js
+                "Authorization": `Bearer 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` // Используем ключ из config.js
             },
             body: JSON.stringify({
                 model: "gpt-3.5-turbo",
